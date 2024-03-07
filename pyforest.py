@@ -2,6 +2,17 @@ import streamlit as st
 import pandas as pd
 
 def calculate_biomass(data, height_col, dbh_col, wd_col):
+    # Check if selected columns exist in the DataFrame
+    if height_col not in data.columns or dbh_col not in data.columns or wd_col not in data.columns:
+        st.error("Selected columns not found in the DataFrame.")
+        return data
+    
+    # Check if selected columns contain numerical data
+    for col in [height_col, dbh_col, wd_col]:
+        if not pd.api.types.is_numeric_dtype(data[col]):
+            st.error(f"Column '{col}' must contain numerical data.")
+            return data
+    
     # Calculate aboveground biomass (AGB)
     agb = 0.0673 * (data[height_col] * data[dbh_col] ** 2 * data[wd_col]) ** 0.976
     
